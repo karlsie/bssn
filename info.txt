@@ -1,0 +1,27 @@
+# Metabase
+URL: http://10.11.120.198:3000
+email: admin.lisensi@bssn.go.id
+pass: adminlisensi145
+
+
+# Database
+
+host : 10.201.120.148
+port : 5432
+user : dwh
+db : dwh
+pass : dwhokebgt!!@
+
+host : 10.201.120.148
+port : 5432
+user : metabase
+db : metabase
+pass : metabaseokebgt!!
+
+
+# VM
+
+10.11.120.198
+metabase
+C0b4-C0b4-2025!@#
+
