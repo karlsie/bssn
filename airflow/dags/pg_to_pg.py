@@ -3,6 +3,12 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 
+# PARAMETERIZED
+SOURCE_CONN_ID = "bssn-sources"
+TARGET_CONN_ID = "bssn-dwh"
+SOURCE_TABLE = "aset_tik"
+TARGET_TABLE = "aset_tik"
+
 
 def transfer_postgres_to_postgres(
         source_conn_id,
@@ -56,10 +62,10 @@ with DAG(
         task_id="transfer_data",
         python_callable=transfer_postgres_to_postgres,
         op_kwargs={
-            "source_conn_id": "postgres_source",
-            "target_conn_id": "postgres_target",
-            "source_table": "users",
-            "target_table": "users_copy"
+            "source_conn_id": SOURCE_CONN_ID,
+            "target_conn_id": TARGET_CONN_ID,
+            "source_table": SOURCE_TABLE,
+            "target_table": TARGET_TABLE
         }
     )
 
