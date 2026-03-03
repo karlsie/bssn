@@ -6,18 +6,28 @@ pass: adminlisensi145
 
 # Database
 
+Target DB
 host : 10.201.120.148
 port : 5432
 user : dwh
 db : dwh
 pass : dwhokebgt!!@
 
+
+METABASE BACKEND DB
 host : 10.201.120.148
 port : 5432
 user : metabase
 db : metabase
 pass : metabaseokebgt!!
 
+
+AIRFLOW BACKEND DB
+host : 10.201.120.148
+port : 5432
+user : airflow
+db : airflow-db
+pass : afokebgt!!
 
 # VM
 
