@@ -3,19 +3,16 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 
-# PARAMETERIZED
-SOURCE_CONN_ID = "bssn-dwh"
-TARGET_CONN_ID = "bssn-dwh"
-SOURCE_TABLE = "aset_tik"
-TARGET_TABLE = "aset_tik_dt"
 
+def transfer_postgres_to_postgres(**context):
+    # Runtime parameters (from manual trigger)
+    conf = context["dag_run"].conf or {}
 
-def transfer_postgres_to_postgres(
-        source_conn_id,
-        target_conn_id,
-        source_table,
-        target_table,
-):
+    source_conn_id = conf.get("source_conn_id", context["params"]["source_conn_id"])
+    target_conn_id = conf.get("target_conn_id", context["params"]["target_conn_id"])
+    source_table = conf.get("source_table", context["params"]["source_table"])
+    target_table = conf.get("target_table", context["params"]["target_table"])
+
     source_hook = PostgresHook(postgres_conn_id=source_conn_id)
     target_hook = PostgresHook(postgres_conn_id=target_conn_id)
 
@@ -26,21 +23,15 @@ def transfer_postgres_to_postgres(
     target_cursor = target_conn.cursor()
 
     try:
-        # Example: Read from source
-        source_cursor.execute(f"""
-            SELECT *
-            FROM {source_table}
-        """)
+        source_cursor.execute(f"SELECT * FROM {source_table}")
         rows = source_cursor.fetchall()
 
         if rows:
-            # Example: Write to target
             insert_query = f"""
                 INSERT INTO {target_table}
                 SELECT *
                 FROM {source_table}
             """
-
             target_cursor.execute(insert_query)
             target_conn.commit()
 
@@ -56,17 +47,17 @@ with DAG(
     start_date=datetime(2024, 1, 1),
     catchup=False,
     tags=["postgres", "etl"],
+    params={  # Default values
+        "source_conn_id": "bssn-dwh",
+        "target_conn_id": "bssn-dwh",
+        "source_table": "aset_tik",
+        "target_table": "aset_tik_dt",
+    },
 ) as dag:
 
     transfer_task = PythonOperator(
         task_id="transfer_data",
         python_callable=transfer_postgres_to_postgres,
-        op_kwargs={
-            "source_conn_id": SOURCE_CONN_ID,
-            "target_conn_id": TARGET_CONN_ID,
-            "source_table": SOURCE_TABLE,
-            "target_table": TARGET_TABLE
-        }
     )
 
     transfer_task
