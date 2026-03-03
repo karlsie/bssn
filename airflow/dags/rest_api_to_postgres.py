@@ -22,9 +22,9 @@ with DAG(
     max_active_runs=1,
     tags=["api", "postgres", "etl"],
     params={
-        "api_url": "http://localhost:8000/orders",
+        "api_url": "http://dummy-api-server:8000/orders",
         "target_conn_id": "postgres_default",
-        "target_table": "dwh.api_data",
+        "target_table": "public.api_data",
     }
 ) as dag:
 
