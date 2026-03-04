@@ -8,7 +8,7 @@ with DAG(
     dag_id="manual_pg_to_pg_transfer",
     start_date=datetime(2026, 3, 1),
     catchup=False,
-    tags=["postgres", "etl"],
+    tags=["manual","postgres", "etl"],
     params={  # Default values
         "source_conn_id": "bssn-dwh",
         "target_conn_id": "bssn-dwh",

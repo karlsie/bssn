@@ -9,7 +9,7 @@ with DAG(
     start_date=datetime(2026, 3, 1),
     schedule="0 2 * * *",  # daily at 02:00 UTC
     catchup=False,
-    tags=["postgres", "etl"],
+    tags=["postgres", "etl", "daily"],
 ) as dag:
 
     table_pairs = [

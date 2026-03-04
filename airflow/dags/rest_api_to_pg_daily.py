@@ -21,7 +21,7 @@ with DAG(
     schedule="0 2 * * *",  # daily at 02:00 UTC
     catchup=False,
     max_active_runs=1,
-    tags=["api", "postgres", "etl"],
+    tags=["api", "postgres", "etl", "daily"],
 ) as dag:
 
     # default list of api/target pairs; the number of tasks is fixed at parse time

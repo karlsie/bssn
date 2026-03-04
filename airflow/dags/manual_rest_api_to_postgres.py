@@ -11,7 +11,7 @@ with DAG(
     start_date=datetime(2026, 3, 1),
     catchup=False,
     max_active_runs=1,
-    tags=["api", "postgres", "etl"],
+    tags=["manual","api", "postgres", "etl"],
     params={
         "api_url": "http://dummy-api-server:8000/nilai_csm",
         "target_conn_id": "bssn-dwh",
