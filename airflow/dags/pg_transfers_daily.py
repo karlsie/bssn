@@ -38,8 +38,8 @@ with DAG(
                 "target_conn_id": "pg-bssn-dwh",
                 "source_table": pair["src"],
                 "target_table": pair["dst"],
-                "load_type": "overwrite",        # override defaults if needed
-                # "date_column": "created_at",
-                # "from_date": "2026-03-01",
+                "load_type": "append",        # override defaults if needed
+                "date_column": "created_at",
+                "from_date": "2026-03-01",
             },
         )

@@ -47,11 +47,12 @@ def transfer_postgres_to_postgres(
         print("No data to transfer.")
         return
 
+    target_schema, target_table_name = target_table.split(".")
+
     # Check if target table exists
     inspector = inspect(target_engine)
-    table_exists = target_table in inspector.get_table_names()
+    table_exists = target_table_name in inspector.get_table_names()
 
-    target_schema, target_table_name = target_table.split(".")
 
     if not table_exists:
         # If table doesn't exist, create it
