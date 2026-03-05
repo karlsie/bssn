@@ -1,0 +1,12 @@
+[
+    {
+        "src": "public.aset_tik",
+        "dst": "public.aset_tik",
+        "load_type": "overwrite"
+    },
+    {
+        "src": "public.aset_sistem",
+        "dst": "public.aset_sistem",
+        "load_type": "overwrite"
+    }
+]

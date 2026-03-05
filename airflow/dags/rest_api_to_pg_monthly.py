@@ -15,18 +15,18 @@ DEFAULT_ARGS = {
 
 
 with DAG(
-    dag_id="rest_api_to_pg_daily",
+    dag_id="rest_api_to_pg_monthly",
     default_args=DEFAULT_ARGS,
     description="Extract REST API data and load into PostgreSQL",
     start_date=datetime(2026, 3, 1),
     schedule="0 2 * * *",  # daily at 02:00 UTC
     catchup=False,
     max_active_runs=1,
-    tags=["api", "postgres", "etl", "daily"],
+    tags=["api", "postgres", "etl", "monthly"],
 ) as dag:
 
     
-    with open("/opt/airflow/dags/values/daily/api_to_pg.json") as f:
+    with open("/opt/airflow/dags/values/monthly/api_to_pg.json") as f:
         api_targets = json.load(f)
 
     # create a task for each configured pair

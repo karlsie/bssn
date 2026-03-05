@@ -14,15 +14,15 @@ DEFAULT_ARGS = {
 }
 
 with DAG(
-    dag_id="pg_transfers_daily",
+    dag_id="pg_transfers_weekly",
     start_date=datetime(2026, 3, 1),
     schedule="0 2 * * *",  # daily at 02:00 UTC
     catchup=False,
     default_args=DEFAULT_ARGS,
-    tags=["postgres", "etl", "daily"],
+    tags=["postgres", "etl", "weekly"],
 ) as dag:
 
-    with open("/opt/airflow/dags/values/daily/pg_to_pg.json") as f:
+    with open("/opt/airflow/dags/values/weekly/pg_to_pg.json") as f:
         table_pairs = json.load(f)
 
     for pair in table_pairs:
