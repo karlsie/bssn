@@ -138,3 +138,57 @@ def load_api_to_postgres(
             method="multi",
             chunksize=1000,
         )
+
+
+def query_dwh_to_dwh(
+    conn_id=None,
+    query_path=None,
+    target_table=None,
+    load_type=None,
+    **context
+):
+    """Running a query against a PostgreSQL database and loading the results into table in the same PostgreSQL database.
+
+    Arguments may be provided via op_kwargs, dag params, or dag_run.conf.
+    """
+
+    conf = context["dag_run"].conf or {}
+
+    conn_id = conn_id or conf.get("conn_id", context["params"]["conn_id"])
+    query_path = query_path or conf.get("query_path", context["params"]["query_path"])
+    target_table = target_table or conf.get("target_table", context["params"]["target_table"])
+    load_type = (load_type or conf.get("load_type", context["params"].get("load_type", "overwrite"))).lower()
+
+    hook = PostgresHook(postgres_conn_id=conn_id)
+    engine = hook.get_sqlalchemy_engine()
+
+    with open(f"/opt/airflow/dags/sql/{query_path}") as sql_file:
+        query = sql_file.read()
+    df = pd.read_sql(query, engine)
+
+    if df.empty:
+        print("No data to load")
+        return
+
+    schema, table = target_table.split(".")
+
+    if load_type == "overwrite":
+        df.to_sql(
+            name=table,
+            con=engine,
+            schema=schema,
+            if_exists="replace",  # drops and recreates table
+            index=False,
+            method="multi",
+            chunksize=1000,
+        )
+    else:
+        df.to_sql(
+            name=table,
+            con=engine,
+            schema=schema,
+            if_exists="append",  # creates if not exists, appends otherwise
+            index=False,
+            method="multi",
+            chunksize=1000,
+        )
