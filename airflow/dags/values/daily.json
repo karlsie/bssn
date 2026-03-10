@@ -3,14 +3,16 @@
         "function": "transfer_postgres_to_postgres",
         "src": "public.kinerja_keamanan_siber",
         "dst": "public.kinerja_keamanan_siber",
-        "load_type": "append",
+        "load_type": "upsert",
+        "keys": ["id_stakeholder"],
         "date_column": "created_at"
     },
     {
         "function": "transfer_postgres_to_postgres",
         "src": "public.nilai_indeks_kami",
         "dst": "public.nilai_indeks_kami",
-        "load_type": "append",
+        "load_type": "upsert",
+        "keys": ["id_stakeholder"],
         "date_column": "created_at"
     },
     {
@@ -19,12 +21,14 @@
         "dst": "public.joined_data",
         "depends_on": [
             "public.kinerja_keamanan_siber"
-        ]
+        ],
+        "load_type": "overwrite"
     },
     {
         "function": "rest_api_to_postgres",
         "api_url": "http://dummy-api-server:8000/nilai_csm",
         "dst": "public.nilai_csm",
-        "load_type": "append"
+        "load_type": "upsert",
+        "keys": ["id_stakeholder"]
     }
 ]

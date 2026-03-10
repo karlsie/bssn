@@ -43,7 +43,8 @@ with DAG(
                     "target_table": pair["dst"],
                     "load_type": pair["load_type"],
                     "date_column": pair.get("date_column"),
-                    "from_date": "{{ macros.ds_add(ds, -1) }}"
+                    "from_date": "{{ macros.ds_add(ds, -1) }}",
+                    "keys": pair.get("keys")
                 },
             )
         elif pair.get("function") == "dwh_to_dwh":
@@ -51,10 +52,11 @@ with DAG(
                 task_id=f"transfer_{pair['dst'].split('.')[-1]}",
                 python_callable=query_dwh_to_dwh,
                 op_kwargs={
-                    "conn_id": "pg-bssn-dwh",
+                    "target_conn_id": "pg-bssn-dwh",
                     "query_path": pair["query_path"],
                     "target_table": pair["dst"],
-                    "load_type": "append"
+                    "load_type": pair["load_type"],
+                    "keys": pair.get("keys")
                 },
             )
         elif pair.get("function") == "rest_api_to_postgres":
@@ -66,7 +68,8 @@ with DAG(
                     # connection id can still be overridden at runtime via conf
                     "target_conn_id": "pg-bssn-dwh",
                     "target_table": pair["dst"],
-                    "load_type": pair.get("load_type", "append"),
+                    "load_type": pair["load_type"],
+                    "keys": pair.get("keys")
                 },
             )
         tasks[pair["dst"]] = task
