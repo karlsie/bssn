@@ -174,6 +174,7 @@ class DagFactory:
         default_args = self.parse_default_args(config)
         catchup = config.get("default_args", {}).get("catchup", False) == True
         tags = config.get("default_args", {}).get("tags", [])
+        schedule = config.get("default_args", {}).get("schedule", None)
         
         logger.info(f"Creating DAG: {dag_id} with schedule: {schedule}")
         
