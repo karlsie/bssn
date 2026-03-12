@@ -59,10 +59,10 @@ class DagFactory:
         # Convert string values to appropriate types
         parsed_args = {
             "owner": default_args.get("owner", "airflow"),
-            "depends_on_past": default_args.get("depends_on_past", "False").lower() == "true",
-            "email_on_failure": default_args.get("email_on_failure", "False").lower() == "true",
-            "retries": int(default_args.get("retries", 1)),
-            "retry_delay": timedelta(minutes=int(default_args.get("retry_delay", 5))),
+            "depends_on_past": default_args.get("depends_on_past", False) == True,
+            "email_on_failure": default_args.get("email_on_failure", False) == True,
+            "retries": default_args.get("retries", 1),
+            "retry_delay": timedelta(minutes=default_args.get("retry_delay", 5)),
         }
         
         # Parse start_date
@@ -172,8 +172,7 @@ class DagFactory:
             raise ValueError("dag_id is required in configuration")
         
         default_args = self.parse_default_args(config)
-        schedule = config.get("default_args", {}).get("schedule", "@daily")
-        catchup = config.get("default_args", {}).get("catchup", "False").lower() == "true"
+        catchup = config.get("default_args", {}).get("catchup", False) == True
         tags = config.get("default_args", {}).get("tags", [])
         
         logger.info(f"Creating DAG: {dag_id} with schedule: {schedule}")
