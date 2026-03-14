@@ -15,7 +15,8 @@ sys.path.insert(0, str(Path(__file__).parent))
 from utils.airflow_utils import (
     transfer_postgres_to_postgres,
     query_dwh_to_dwh,
-    load_api_to_postgres
+    load_api_to_postgres,
+    load_only_office_file_to_postgres,
 )
 
 logger = logging.getLogger(__name__)
@@ -117,6 +118,9 @@ class DagFactory:
                     keys=job_config.get("keys"),
                     **context
                 )
+            elif function_name == "only_office_to_pg":
+                #TODO: write the function to load file from OnlyOffice to PostgreSQL
+                pass
             else:
                 raise ValueError(f"Unknown function: {function_name}")
         

@@ -1,6 +1,7 @@
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 from utils.db_utils import read_postgredb, write_postgredb
 from utils.api_utils import fetch_api_data
+from utils.drive_utils import download_file_from_only_office, read_file_from_only_office
 
 
 def transfer_postgres_to_postgres(
@@ -133,3 +134,8 @@ def query_dwh_to_dwh(
     )
 
     write_postgredb(df, engine, target_table, load_type=load_type, keys=keys)
+
+
+def load_only_office_file_to_postgres():
+    #TODO: Code to load file from OnlyOffice to PostgreSQL
+    pass
