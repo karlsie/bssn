@@ -1,17 +1,6 @@
 import requests
-
-
-def list_files_in_only_office(conn_username, conn_password):
-    url = "https://onlyoffice.example.com/api/files"
-
-    response = requests.get(url, auth=(conn_username, conn_password))
-
-    response.raise_for_status()
-
-    files = response.json()
-    print(f"Files in OnlyOffice: {len(files)} found")
-
-    return files
+import pandas as pd
+from datetime import datetime
 
 
 def download_file_from_only_office(file, drive_url, conn_username, conn_password):
@@ -29,8 +18,17 @@ def download_file_from_only_office(file, drive_url, conn_username, conn_password
 
 
 def read_file_from_only_office(downloaded_file_path):
-    # Placeholder for reading file content from OnlyOffice
-    with open(downloaded_file_path, "r") as f:
-        content = f.read()
-    print(f"File content read successfully: {downloaded_file_path}")
-    return content
+    """Read CSV, XLSX, or XLS files and add created_at timestamp."""
+    # Determine file type by extension
+    if downloaded_file_path.endswith('.csv'):
+        df = pd.read_csv(downloaded_file_path)
+    elif downloaded_file_path.endswith(('.xlsx', '.xls')):
+        df = pd.read_excel(downloaded_file_path)
+    else:
+        raise ValueError(f"Unsupported file format: {downloaded_file_path}. Supported: .csv, .xlsx, .xls")
+    
+    # Add created_at timestamp
+    df['created_at'] = datetime.now()
+    
+    print(f"File read successfully: {downloaded_file_path}")
+    return df

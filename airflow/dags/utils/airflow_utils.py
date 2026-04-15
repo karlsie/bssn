@@ -4,7 +4,6 @@ from utils.api_utils import fetch_api_data
 from utils.drive_utils import (
     download_file_from_only_office,
     read_file_from_only_office,
-    list_files_in_only_office,
 )
 
 
@@ -144,23 +143,45 @@ def load_only_office_file_to_postgres(
     conn_username,
     conn_password,
     drive_url,
+    filename,
     target_conn_id,
     target_table,
-    load_type="overwrite",
+    load_type=None,
     keys=None,
     **context,
 ):
-    files = list_files_in_only_office(conn_username, conn_password)
-    if not files:
-        print("No files found in OnlyOffice.")
-        return
+    """Fetch files from OnlyOffice, read the content, and load into PostgreSQL."""
 
-    for file in files:
-        print(f"Processing file: {file}")
-        download_file_from_only_office(file, drive_url, conn_username, conn_password)
+    conf = context["dag_run"].conf or {}
+    conn_username = conn_username or conf.get(
+        "conn_username", context["params"].get("conn_username")
+    )
+    conn_password = conn_password or conf.get(
+        "conn_password", context["params"].get("conn_password")
+    )
+    drive_url = drive_url or conf.get(
+        "drive_url", context["params"].get("drive_url")
+    )
+    filename = filename or conf.get(
+        "filename", context["params"].get("filename")
+    )
+    target_conn_id = target_conn_id or conf.get(
+        "target_conn_id", context["params"].get("target_conn_id")
+    )
+    target_table = target_table or conf.get(
+        "target_table", context["params"].get("target_table")
+    )
+    load_type = (
+        load_type
+        or conf.get("load_type", context["params"].get("load_type", "overwrite"))
+    ).lower()
+    keys = keys or conf.get("keys", context["params"].get("keys"))
 
-        content = read_file_from_only_office(f"/tmp/{file}")
+    print(f"Processing file: {filename}")
+    download_file_from_only_office(filename, drive_url, conn_username, conn_password)
 
-        write_postgredb(
-            content, target_conn_id, target_table, load_type=load_type, keys=keys
-        )
+    content = read_file_from_only_office(f"/tmp/{filename}")
+
+    write_postgredb(
+        content, target_conn_id, target_table, load_type=load_type, keys=keys
+    )

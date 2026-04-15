@@ -126,6 +126,7 @@ class DagFactory:
                     conn_username=only_office_conn.get("username"),
                     conn_password=only_office_conn.get("password"),
                     drive_url=job_config.get("drive_url"),
+                    filename=job_config.get("filename"),
                     target_conn_id=job_config.get("target_conn_id"),
                     target_table=job_config.get("dst"),
                     load_type=job_config.get("load_type", "overwrite"),
