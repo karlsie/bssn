@@ -51,8 +51,7 @@
         },
         {
             "function": "only_office_to_pg",
-            "token": "fZFX4AnFTneMwbB",
-            "password": "test123@56",
+            "only_office_conn": "TESTING",
             "file_url": "https://drive.bssn.go.id/public.php/dav/files/fZFX4AnFTneMwbB/?accept=zip",
             "filename": "TESTING.xlsx",
             "format": "xlsx",

@@ -1,6 +1,7 @@
 import json
 import os
 import logging
+import requests
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.providers.standard.operators.python import PythonOperator
@@ -23,6 +24,68 @@ from utils.airflow_utils import (
 logger = logging.getLogger(__name__)
 
 only_office_conn = Variable.get("only_office_conn", deserialize_json=True)
+
+
+def send_failure_notification(context):
+    """Send Slack notification on DAG failure."""
+    dag_id = context['dag'].dag_id
+    task_id = context['task'].task_id
+    execution_date = context['execution_date']
+    exception = context.get('exception')
+    
+    # Get Slack webhook URL from Airflow variables
+    slack_webhook_url = Variable.get("slack_failure_webhook_url")
+    if not slack_webhook_url:
+        logger.warning("Slack webhook URL not configured. Skipping failure notification.")
+        return
+    
+    message = {
+        "text": f"🚨 Airflow DAG Failure Alert",
+        "blocks": [
+            {
+                "type": "header",
+                "text": {
+                    "type": "plain_text",
+                    "text": "🚨 DAG Failure Alert"
+                }
+            },
+            {
+                "type": "section",
+                "fields": [
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*DAG ID:*\n{dag_id}"
+                    },
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*Task ID:*\n{task_id}"
+                    },
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*Execution Date:*\n{execution_date}"
+                    },
+                    {
+                        "type": "mrkdwn",
+                        "text": f"*Exception:*\n```{str(exception)[:500]}```"
+                    }
+                ]
+            },
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "Please check the Airflow UI for more details."
+                }
+            }
+        ]
+    }
+    
+    try:
+        response = requests.post(slack_webhook_url, json=message)
+        response.raise_for_status()
+        logger.info(f"Failure notification sent to Slack for DAG {dag_id}, task {task_id}")
+    except Exception as e:
+        logger.error(f"Failed to send Slack notification: {str(e)}")
 
 
 class DagFactory:
@@ -123,10 +186,8 @@ class DagFactory:
                 )
             elif function_name == "only_office_to_pg":
                 return load_only_office_file_to_postgres(
-                    # conn_username=only_office_conn.get("username"),
-                    # conn_password=only_office_conn.get("password"),
-                    token=job_config.get("token"),
-                    password=job_config.get("password"),
+                    token=only_office_conn.get(job_config.get("only_office_conn")).get("token"),
+                    password=only_office_conn.get(job_config.get("only_office_conn")).get("password"),
                     file_url=job_config.get("file_url"),
                     filename=job_config.get("filename"),
                     format=job_config.get("format"),
@@ -181,13 +242,19 @@ class DagFactory:
         logger.info(f"Creating DAG: {dag_id} with schedule: {schedule}")
 
         # Create DAG with both schedule_interval and schedule for compatibility
-        dag = DAG(
-            dag_id=dag_id,
-            default_args=default_args,
-            schedule=schedule,  # New parameter name
-            catchup=catchup,
-            tags=tags,
-        )
+        dag_kwargs = {
+            "dag_id": dag_id,
+            "default_args": default_args,
+            "schedule": schedule,  # New parameter name
+            "catchup": catchup,
+            "tags": tags,
+        }
+        
+        # Add failure callback if email_on_failure is enabled (reusing the flag for Slack notifications)
+        if default_args.get("email_on_failure", False):
+            dag_kwargs["on_failure_callback"] = send_failure_notification
+        
+        dag = DAG(**dag_kwargs)
 
         # Create tasks from jobs
         jobs = config.get("jobs", [])
