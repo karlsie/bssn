@@ -140,9 +140,10 @@ def query_dwh_to_dwh(
 
 
 def load_only_office_file_to_postgres(
-    conn_username,
-    conn_password,
-    drive_url,
+    # conn_username,
+    # conn_password,
+    file_url,
+    format,
     filename,
     target_conn_id,
     target_table,
@@ -153,17 +154,20 @@ def load_only_office_file_to_postgres(
     """Fetch files from OnlyOffice, read the content, and load into PostgreSQL."""
 
     conf = context["dag_run"].conf or {}
-    conn_username = conn_username or conf.get(
-        "conn_username", context["params"].get("conn_username")
-    )
-    conn_password = conn_password or conf.get(
-        "conn_password", context["params"].get("conn_password")
-    )
-    drive_url = drive_url or conf.get(
-        "drive_url", context["params"].get("drive_url")
+    # conn_username = conn_username or conf.get(
+    #     "conn_username", context["params"].get("conn_username")
+    # )
+    # conn_password = conn_password or conf.get(
+    #     "conn_password", context["params"].get("conn_password")
+    # )
+    file_url = file_url or conf.get(
+        "file_url", context["params"].get("file_url")
     )
     filename = filename or conf.get(
         "filename", context["params"].get("filename")
+    )
+    format = format or conf.get(
+        "format", context["params"].get("format")
     )
     target_conn_id = target_conn_id or conf.get(
         "target_conn_id", context["params"].get("target_conn_id")
@@ -178,9 +182,9 @@ def load_only_office_file_to_postgres(
     keys = keys or conf.get("keys", context["params"].get("keys"))
 
     print(f"Processing file: {filename}")
-    download_file_from_only_office(filename, drive_url, conn_username, conn_password)
+    download_file_from_only_office(file_url, filename)
 
-    content = read_file_from_only_office(f"/tmp/{filename}")
+    content = read_file_from_only_office(f"/tmp/{filename}", format)
 
     write_postgredb(
         content, target_conn_id, target_table, load_type=load_type, keys=keys

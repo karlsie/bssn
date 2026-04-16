@@ -3,29 +3,28 @@ import pandas as pd
 from datetime import datetime
 
 
-def download_file_from_only_office(file, drive_url, conn_username, conn_password):
-    url = f"{drive_url}/{file}"
-
-    print(f"Downloading file from OnlyOffice: {url}")
-    response = requests.get(url, auth=(conn_username, conn_password))
+def download_file_from_only_office(file_url, filename):
+    print(f"Downloading file from URL: {file_url}")
+    response = requests.get(file_url)
 
     response.raise_for_status()
 
-    with open(f"/tmp/{file}", "wb") as f:
+    with open(f"/tmp/{filename}", "wb") as f:
         f.write(response.content)
 
-    print(f"File downloaded successfully: /tmp/{file}")
+    print(f"File downloaded successfully: /tmp/{filename}")
 
 
-def read_file_from_only_office(downloaded_file_path):
-    """Read CSV, XLSX, or XLS files and add created_at timestamp."""
-    # Determine file type by extension
-    if downloaded_file_path.endswith('.csv'):
+def read_file_from_only_office(downloaded_file_path, format):
+    """Read CSV, XLSX, or XLS files based on format parameter and add created_at timestamp."""
+    format = format.lower()
+    
+    if format == 'csv':
         df = pd.read_csv(downloaded_file_path)
-    elif downloaded_file_path.endswith(('.xlsx', '.xls')):
+    elif format in ('xlsx', 'xls'):
         df = pd.read_excel(downloaded_file_path)
     else:
-        raise ValueError(f"Unsupported file format: {downloaded_file_path}. Supported: .csv, .xlsx, .xls")
+        raise ValueError(f"Unsupported file format: {format}. Supported: csv, xlsx, xls")
     
     # Add created_at timestamp
     df['created_at'] = datetime.now()
