@@ -143,7 +143,7 @@ Task IDs must be explicitly specified in the job configuration using the `task_i
 
 ### Installation
 
-1. **Initialize Airflow database and user:**
+1. **Initialize Airflow database and user in DEV:**
    ```bash
    make up
    ```
@@ -151,12 +151,18 @@ Task IDs must be explicitly specified in the job configuration using the `task_i
    - `docker-compose up -d airflow-init` - Initializes the database
    - `docker-compose --profile flower up -d` - Starts all services including Flower monitoring
 
-2. **Check service status:**
+2. **Initialize Airflow database and user in PROD:**
+   ```bash
+   make up-prod
+   ```
+   This uses `.env.vm` file for production configuration.
+
+3. **Check service status:**
    ```bash
    make status
    ```
 
-3. **Access Airflow UI:**
+4. **Access Airflow UI:**
    - URL: `http://localhost:8080`
    - Default credentials: `airflow` / `airflow`
 
