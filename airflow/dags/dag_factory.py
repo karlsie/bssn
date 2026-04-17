@@ -25,12 +25,13 @@ from utils.airflow_utils import (
 logger = logging.getLogger(__name__)
 
 only_office_conn = Variable.get("only_office_conn", deserialize_json=True)
+AIRFLOW_URL = Variable.get("airflow_url")
 
 
 def send_failure_notification(context):
     """Send Slack notification on DAG failure."""
 
-    message_dict = construct_failure_message(context)
+    message_dict = construct_failure_message(context, AIRFLOW_URL)
     
     slack_alert = SlackWebhookOperator(
         task_id="slack_failure_notification",

@@ -1,7 +1,4 @@
-AIRFLOW_URL = "http://localhost:8080"
-
-
-def construct_failure_message(context):
+def construct_failure_message(context, airflow_url):
     """Construct Slack message payload for DAG failure notification.
     
     Args:
@@ -61,7 +58,7 @@ def construct_failure_message(context):
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": f"Please check the <{AIRFLOW_URL}|Airflow UI> for more details."
+                    "text": f"Please check the <{airflow_url}|Airflow UI> for more details."
                 }
             }
         ]
