@@ -1,8 +1,8 @@
-up:
-	docker-compose --env-file .env.local up -d airflow-init
-	docker-compose --env-file .env.local --profile flower up -d
+dev:
+	docker-compose --env-file .env.dev up -d airflow-init
+	docker-compose --env-file .env.dev --profile flower up -d
 
-up-prod:
+prod:
 	docker-compose --env-file .env up -d airflow-init
 	docker-compose --env-file .env --profile flower up -d
 
