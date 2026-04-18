@@ -148,14 +148,16 @@ Task IDs must be explicitly specified in the job configuration using the `task_i
    make dev
    ```
    This runs on `.env.dev` configuration. It performs the following steps:
-   - `docker-compose up -d airflow-init` - Initializes the database
-   - `docker-compose --profile flower up -d` - Starts all services including Flower monitoring
+   - `docker-compose --env-file .env.dev up -d airflow-init` - Initializes the database
+   - `docker-compose --env-file .env.dev --profile flower up -d` - Starts all services including Flower monitoring
 
 2. **Initialize Airflow database and user in PROD:**
    ```bash
    make prod
    ```
-   This uses `.env` file for production configuration.
+   This uses `.env` file for production configuration. It performs the following steps:
+   - `docker-compose --env-file .env up -d airflow-init` - Initializes the database
+   - `docker-compose --env-file .env --profile flower up -d` - Starts all services including Flower monitoring
 
 3. **Check service status:**
    ```bash
