@@ -38,7 +38,7 @@ def send_failure_notification(context):
         slack_webhook_conn_id="slack_api_default",
         message=message_dict["text"],
         blocks=message_dict["blocks"],
-        channel="#airflow-alert",
+        channel="#airflow_alert",
     )
     return slack_alert.execute(context=context)
 
