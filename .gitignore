@@ -14,7 +14,10 @@ Thumbs.db
 *.swo
 
 # Environment Variables & Secrets
+**/*.env
+**/*.env.dev
 *.env
+*.env.dev
 .env.local
 .env.*.local
 info.txt
@@ -46,3 +49,6 @@ node_modules/
 **/build/
 **/target/
 **/*.txt
+
+# Added by ggshield
+.cache_ggshield
