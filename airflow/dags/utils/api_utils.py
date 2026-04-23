@@ -39,8 +39,6 @@ def fetch_api_data(
         else:
             data = response.json() if hasattr(response, "json") else response
 
-        print(data)
-
         # Handle both dict and list responses
         rows = (
             data.get(datakey, [])
