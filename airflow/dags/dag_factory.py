@@ -135,6 +135,7 @@ class DagFactory:
                 return load_api_to_postgres(
                     http_conn_id=job_config.get("http_conn_id"),
                     endpoint=job_config.get("endpoint"),
+                    datakey=job_config.get("datakey"),
                     target_table=job_config.get("dst"),
                     target_conn_id=job_config.get("target_conn_id"),
                     load_type=job_config.get("load_type", "overwrite"),

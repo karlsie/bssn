@@ -68,6 +68,7 @@ def transfer_postgres_to_postgres(
 def load_api_to_postgres(
     http_conn_id=None,
     endpoint=None,
+    datakey=None,
     target_conn_id=None,
     target_table=None,
     load_type="append",
@@ -84,6 +85,7 @@ def load_api_to_postgres(
         "http_conn_id", context["params"].get("http_conn_id")
     )
     endpoint = endpoint or conf.get("endpoint", context["params"].get("endpoint"))
+    datakey = datakey or conf.get("datakey", context["params"].get("datakey"))
     target_conn_id = target_conn_id or conf.get(
         "target_conn_id", context["params"].get("target_conn_id")
     )
@@ -98,7 +100,7 @@ def load_api_to_postgres(
 
     headers = {"Content-Type": "application/json"}
     http_hook = HttpHook(http_conn_id=http_conn_id, method="GET")
-    df = fetch_api_data(http_hook, endpoint, headers=headers)
+    df = fetch_api_data(http_hook, endpoint, headers=headers, datakey=datakey)
 
     hook = PostgresHook(postgres_conn_id=target_conn_id)
     engine = hook.get_sqlalchemy_engine()

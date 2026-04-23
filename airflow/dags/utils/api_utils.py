@@ -7,6 +7,7 @@ def fetch_api_data(
     endpoint,
     params=None,
     headers=None,
+    datakey=None,
 ):
     """Fetch data from an API endpoint using Airflow HTTPHook and return as pandas DataFrame.
 
@@ -38,16 +39,21 @@ def fetch_api_data(
         else:
             data = response.json() if hasattr(response, "json") else response
 
+        print(data)
+
         # Handle both dict and list responses
         rows = (
-            data.get("results", [])
-            if isinstance(data, dict)
+            data.get(datakey, [])
+            if datakey is not None and isinstance(data, dict)
             else (data if isinstance(data, list) else [])
         )
         df = pd.json_normalize(rows)
+        print(df)
 
-        df.columns = df.columns.str.lower().str.replace(
-            r"[^a-zA-Z0-9_]", "_", regex=True
+        df.columns = (
+            df.columns.astype(str)
+            .str.lower()
+            .str.replace(r"[^a-zA-Z0-9_]", "_", regex=True)
         )
         df["updated_at"] = pd.Timestamp.now()
         return df

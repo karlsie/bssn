@@ -15,8 +15,10 @@
         {
             "task_id": "rest_api_to_pg_stakeholder_dst",
             "function": "rest_api_to_pg",
+            "http_conn_id": "dummy_api_server",
+            "endpoint": "/stakeholder",
+            "datakey": "data",
             "target_conn_id": "pg-bssn-dwh",
-            "api_url": "http://dummy-api-server:8000/stakeholder",
             "dst": "public.stakeholder_dst",
             "load_type": "upsert",
             "keys": ["id_stakeholder"]
