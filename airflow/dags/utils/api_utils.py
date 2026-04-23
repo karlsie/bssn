@@ -48,7 +48,6 @@ def fetch_api_data(
             else (data if isinstance(data, list) else [])
         )
         df = pd.json_normalize(rows)
-        print(df)
 
         df.columns = (
             df.columns.astype(str)
